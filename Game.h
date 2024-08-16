@@ -36,8 +36,9 @@ class Game
 	void spawnPlayer();
 	void spawnTopBar();
 	void spawnEnemy();
+	void spawnBall();
 	void spawnSmallEnemies(std::shared_ptr<Entity> entity);
-	void spawnBall(std::shared_ptr<Entity> entity, const Vec2& mousePos);
+	// void spawnBall(std::shared_ptr<Entity> entity, const Vec2& mousePos);
 
 public:
 	Game(const std::string& config); // constructor, takes in game config

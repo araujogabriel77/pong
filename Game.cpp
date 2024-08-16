@@ -49,6 +49,7 @@ void Game::init(const std::string& path)
 
   spawnPlayer();
   spawnTopBar();
+  spawnBall();
 }
 
 void Game::run()
@@ -122,22 +123,24 @@ void Game::spawnTopBar()
   );
 }
 
-void Game::spawnBall(std::shared_ptr<Entity> entity, const Vec2& target)
+void Game::spawnBall()
 {
-  auto bullet = m_entities.addEntity("ball");
+  auto entity = m_entities.addEntity("ball");
 
-  bullet->circleShape = std::make_shared<CShape>(
-      8,
-      8,
-      sf::Color(255, 0, 0),
+  entity->rectShape = std::make_shared<CRectShape>(
+      sf::Vector2f(20, 20),
       sf::Color(255, 255, 255),
-      1);
+      sf::Color(255, 0, 255),
+      4.0f
+  );
 
-  Vec2 difference{target.x - entity->cTransform->pos.x, target.y - entity->cTransform->pos.y};
-  // Vec2 velocity{m_bulletConfig.S * difference.x, m_bulletConfig.S * difference.y};
 
-  // bullet->cTransform = std::make_shared<CTransform>(entity->cTransform->pos, {1, 1}, 0);
-  bullet->cCollision = std::make_shared<CCollision>(8);
+  entity->cInput = std::make_shared<CInput>();
+  entity->cTransform = std::make_shared<CTransform>(
+    Vec2(m_window.getSize().x / 2, m_window.getSize().y / 2),
+    Vec2(0.0f, 0.0f),
+    0.0f
+  );
 }
 
 void Game::sMovement()
