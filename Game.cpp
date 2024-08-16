@@ -5,7 +5,7 @@
 #include <random>
 #include <cmath>
 
-const int PLAYER_SPEED = 5;
+const int PLAYER_SPEED = 15;
 
 Game::Game(const std::string& config)
 {
@@ -14,8 +14,6 @@ Game::Game(const std::string& config)
 
 void Game::init(const std::string& path)
 {
-	// TODO: read in config file here
-	// use the premade PlayerConfig, EnemyConfig, BulletConfig variables
 	std::ifstream fin(path);
   std::string configType;
   int window_width, window_height, frameLimit, isFullScreen;
@@ -50,6 +48,7 @@ void Game::init(const std::string& path)
   m_window.setVerticalSyncEnabled(true);
 
   spawnPlayer();
+  spawnTopBar();
 }
 
 void Game::run()
@@ -64,14 +63,9 @@ void Game::run()
     {
       sCollision();
       sMovement();
-      // sEnemySpawner();
-      // sLifespan();
       sScore();
       m_currentFrame++;
     }
-
-    // increment the current frame
-    // may need to be moved when pause implemented
   }
 }
 
@@ -87,35 +81,47 @@ void Game::sScore()
   m_text.setPosition(10, 10);
 }
 
-// respawn the player in the middle of the screen
 void Game::spawnPlayer()
 {
-	// TODO: Finish adding all properties of the player with the correct values from the config
-
-	// we create every entity by calling EntityManger.addEntity(tag)
-	// This returns a std::shared_ptr<Entity>, so we use 'auto' to save typing
+	// auto entity = m_entities.addEntity("player");
 	auto entity = m_entities.addEntity("player");
 
-	// entity->cTransform = std::make_shared<CTransform>(Vec2(200.0f, 200.0f), Vec2(1.0f, 1.0f), 0.0f);
-
   entity->rectShape = std::make_shared<CRectShape>(
-      sf::Vector2f(64, 64),
-      200,
-      200,
+      sf::Vector2f(m_window.getSize().x / 3, 32),
       sf::Color(0, 0, 0),
       sf::Color(255, 0, 0),
       4.0f
   );
 
-  // Add an input component to the plaer so that we can use inputs
   entity->cInput = std::make_shared<CInput>();
-  entity->cTransform = std::make_shared<CTransform>(Vec2(200.0f, 200.0f), Vec2(1.0f, 1.0f), 0.0f);
-  // Since we want this Entity to be our player, set our Game's player variable to be this Entioty
-  // This goes slightly against the EntityManager paradim, but we use the player so much it's worth it
+  entity->cTransform = std::make_shared<CTransform>(
+    Vec2(m_window.getSize().x / 2, m_window.getSize().y - (entity->rectShape->m_size.y / 2)),
+    Vec2(1.0f, 1.0f),
+    0.0f
+    );
   m_player = entity;
 }
 
-// spawns a bullet from a given entity to a target location
+void Game::spawnTopBar()
+{
+	auto entity = m_entities.addEntity("top_bar");
+
+  entity->rectShape = std::make_shared<CRectShape>(
+      sf::Vector2f(m_window.getSize().x, 16),
+      sf::Color(255, 255, 255),
+      sf::Color(0, 255, 255),
+      4.0f
+  );
+
+
+  entity->cInput = std::make_shared<CInput>();
+  entity->cTransform = std::make_shared<CTransform>(
+    Vec2((m_window.getSize().x - (entity->rectShape->rectangle.getOutlineThickness() * 2)) / 2, entity->rectShape->m_size.y / 2),
+    Vec2(0.0f, 0.0f),
+    0.0f
+  );
+}
+
 void Game::spawnBall(std::shared_ptr<Entity> entity, const Vec2& target)
 {
   auto bullet = m_entities.addEntity("ball");
@@ -134,33 +140,19 @@ void Game::spawnBall(std::shared_ptr<Entity> entity, const Vec2& target)
   bullet->cCollision = std::make_shared<CCollision>(8);
 }
 
-
 void Game::sMovement()
 {
-  // TODO: implement all entity movement in this function
-  //			you should read the m_player->cInput component to determine if the player is moving
-
   m_player->cTransform->velocity = {0, 0};
 
-  // implement player movement
-  // if (m_player->cInput->up && (m_player->cTransform->pos.y - playerRadius) > PLAYER_SPEED)
-  // {
-  //     m_player->cTransform->velocity.y = -PLAYER_SPEED;
-  // }
-  // if (m_player->cInput->down && (m_player->cTransform->pos.y + playerRadius) < m_window.getSize().y - PLAYER_SPEED)
-  // {
-  //   m_player->cTransform->velocity.y = PLAYER_SPEED;
-  // }
-
-  std::cout << "posição do jogador: " << m_player->cTransform->pos.x << std::endl;
-  std::cout << "tamanho do jogador: " << m_player->rectShape->m_size.x << std::endl;
-  std::cout << "posição do jogador - tamanho do jogador: " << m_player->cTransform->pos.x - m_player->rectShape->m_size.x << std::endl;
-  std::cout << m_window.getSize().x << std::endl;
-  if (m_player->cInput->left && (m_player->cTransform->pos.x) > PLAYER_SPEED + m_player->rectShape->rectangle.getOutlineThickness())
+  // std::cout << "posição do jogador: " << m_player->cTransform->pos.x << std::endl;
+  // std::cout << "tamanho do jogador: " << m_player->rectShape->m_size.x << std::endl;
+  // std::cout << "posição do jogador - tamanho do jogador: " << m_player->cTransform->pos.x - m_player->rectShape->m_size.x << std::endl;
+  // std::cout << m_window.getSize().x << std::endl;
+  if (m_player->cInput->left && (m_player->cTransform->pos.x) > PLAYER_SPEED + m_player->rectShape->m_size.x / 2)
   {
     m_player->cTransform->velocity.x = -PLAYER_SPEED;
   }
-  if (m_player->cInput->right && (m_player->cTransform->pos.x + m_player->rectShape->m_size.x) < m_window.getSize().x - PLAYER_SPEED)
+  if (m_player->cInput->right && (m_player->cTransform->pos.x + (m_player->rectShape->m_size.x / 2)) < m_window.getSize().x - PLAYER_SPEED)
   {
     m_player->cTransform->velocity.x = PLAYER_SPEED;
   }
@@ -178,7 +170,6 @@ void Game::sMovement()
   }
 }
 
-
 void Game::sCollision()
 {
   for (auto b : m_entities.getEntities("ball"))
@@ -191,7 +182,6 @@ void Game::sCollision()
   }
 }
 
-
 void Game::sRender()
 {
   m_window.clear();
@@ -202,6 +192,7 @@ void Game::sRender()
   m_window.draw(m_text);
   for (auto e : m_entities.getEntities())
   {
+    std::cout << e->tag() << std::endl;
     float xPos, yPos;
     xPos = e->cTransform->pos.x + e->cTransform->velocity.x;
     yPos = e->cTransform->pos.y + e->cTransform->velocity.y;
@@ -215,11 +206,6 @@ void Game::sRender()
 
 void Game::sUserInput()
 {
-	// TODO: handle user input here
-	//		note that you should only be setting the player's input component variables here
-	//		you should not implement the player's movement logic here
-	//		the movement system will read the variables you set in this function
-
 	sf::Event event;
 	while (m_window.pollEvent(event))
 	{

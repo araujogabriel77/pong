@@ -1,1 +1,1 @@
-g++ *.cpp -o main -lsfml-graphics -lsfml-window -lsfml-system && ./main
+g++ *.cpp -o exec/main -lsfml-graphics -lsfml-window -lsfml-system && ./exec/main

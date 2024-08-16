@@ -39,19 +39,17 @@ public:
 
 	CRectShape(
     sf::Vector2f size,
-    int posX,
-    int posY,
     const sf::Color& fill,
 		const sf::Color& outline,
     float thickness
     )
 		: rectangle(size),
-      m_size(size)
+      m_size(sf::Vector2f(size.x + thickness, size.y + thickness))
 	{
 		rectangle.setFillColor(fill);
 		rectangle.setOutlineColor(outline);
 		rectangle.setOutlineThickness(thickness);
-		rectangle.setPosition(posX, posY);
+    rectangle.setOrigin(size.x / 2, size.y / 2);
 	}
 };
 

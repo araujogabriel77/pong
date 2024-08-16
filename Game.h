@@ -34,6 +34,7 @@ class Game
 	void sScore(); // System: Score
 
 	void spawnPlayer();
+	void spawnTopBar();
 	void spawnEnemy();
 	void spawnSmallEnemies(std::shared_ptr<Entity> entity);
 	void spawnBall(std::shared_ptr<Entity> entity, const Vec2& mousePos);
