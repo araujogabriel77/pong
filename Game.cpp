@@ -95,6 +95,7 @@ void Game::spawnPlayer()
   );
 
   entity->cInput = std::make_shared<CInput>();
+  entity->cCollision = std::make_shared<CCollision>(32);
   entity->cTransform = std::make_shared<CTransform>(
     Vec2(m_window.getSize().x / 2, m_window.getSize().y - (entity->rectShape->m_size.y / 2)),
     Vec2(1.0f, 1.0f),
@@ -116,6 +117,7 @@ void Game::spawnTopBar()
 
 
   entity->cInput = std::make_shared<CInput>();
+  entity->cCollision = std::make_shared<CCollision>(16);
   entity->cTransform = std::make_shared<CTransform>(
     Vec2((m_window.getSize().x - (entity->rectShape->rectangle.getOutlineThickness() * 2)) / 2, entity->rectShape->m_size.y / 2),
     Vec2(0.0f, 0.0f),
@@ -127,19 +129,23 @@ void Game::spawnBall()
 {
   auto entity = m_entities.addEntity("ball");
 
+  float ex = m_window.getSize().x / 2;
+  float ey = m_window.getSize().y / 2;
+  float targetX = rand() % m_window.getSize().x;
+  float targetY = rand() % m_window.getSize().y;
+
+  Vec2 difference{targetX - ex, targetY - ey};
+  difference.normalize();
+  Vec2 velocity{5 * difference.x, 5 * difference.y};
+
+  entity->cTransform = std::make_shared<CTransform>(Vec2(ex, ey), velocity, 0.0f);
+  entity->cCollision = std::make_shared<CCollision>(20);
+  entity->cInput = std::make_shared<CInput>();
   entity->rectShape = std::make_shared<CRectShape>(
       sf::Vector2f(20, 20),
       sf::Color(255, 255, 255),
       sf::Color(255, 0, 255),
       4.0f
-  );
-
-
-  entity->cInput = std::make_shared<CInput>();
-  entity->cTransform = std::make_shared<CTransform>(
-    Vec2(m_window.getSize().x / 2, m_window.getSize().y / 2),
-    Vec2(0.0f, 0.0f),
-    0.0f
   );
 }
 
@@ -175,12 +181,17 @@ void Game::sMovement()
 
 void Game::sCollision()
 {
-  for (auto b : m_entities.getEntities("ball"))
+  for (auto ball : m_entities.getEntities("ball"))
   {
-    for (auto e : m_entities.getEntities("enemy"))
+    for (auto player : m_entities.getEntities("player"))
     {
       float dist;
-      dist = b->cTransform->pos.dist(e->cTransform->pos);
+      dist = ball->cTransform->pos.dist(player->cTransform->pos);
+
+      if (dist < player->cCollision->radius + ball->cCollision->radius)
+      {
+        ball->cTransform->velocity = {ball->cTransform->velocity.x, -ball->cTransform->velocity.y};
+      }
     }
   }
 }
