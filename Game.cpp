@@ -84,20 +84,21 @@ void Game::sScore()
 
 void Game::spawnPlayer()
 {
-	// auto entity = m_entities.addEntity("player");
+  float width = m_window.getSize().x / 3;
+  float height = 32;
 	auto entity = m_entities.addEntity("player");
 
   entity->rectShape = std::make_shared<CRectShape>(
-      sf::Vector2f(m_window.getSize().x / 3, 32),
+      sf::Vector2f(width, height),
       sf::Color(0, 0, 0),
       sf::Color(255, 0, 0),
       4.0f
   );
 
   entity->cInput = std::make_shared<CInput>();
-  entity->cCollision = std::make_shared<CCollision>(32);
+  entity->cCollideBox = std::make_shared<CCollideBox>(width, height);
   entity->cTransform = std::make_shared<CTransform>(
-    Vec2(m_window.getSize().x / 2, m_window.getSize().y - (entity->rectShape->m_size.y / 2)),
+    Vec2((m_window.getSize().x / 2) - (width / 2), m_window.getSize().y - entity->rectShape->m_size.y),
     Vec2(1.0f, 1.0f),
     0.0f
     );
@@ -105,11 +106,13 @@ void Game::spawnPlayer()
 }
 
 void Game::spawnTopBar()
-{
+{ 
+  float width = m_window.getSize().x;
+  float height = 16;
 	auto entity = m_entities.addEntity("top_bar");
 
   entity->rectShape = std::make_shared<CRectShape>(
-      sf::Vector2f(m_window.getSize().x, 16),
+      sf::Vector2f(width, height),
       sf::Color(255, 255, 255),
       sf::Color(0, 255, 255),
       4.0f
@@ -117,9 +120,9 @@ void Game::spawnTopBar()
 
 
   entity->cInput = std::make_shared<CInput>();
-  entity->cCollision = std::make_shared<CCollision>(16);
+  entity->cCollideBox = std::make_shared<CCollideBox>(width, height);
   entity->cTransform = std::make_shared<CTransform>(
-    Vec2((m_window.getSize().x - (entity->rectShape->rectangle.getOutlineThickness() * 2)) / 2, entity->rectShape->m_size.y / 2),
+    Vec2(0.0f, 0.0f),
     Vec2(0.0f, 0.0f),
     0.0f
   );
@@ -127,6 +130,8 @@ void Game::spawnTopBar()
 
 void Game::spawnBall()
 {
+  float width = 20;
+  float height = 20;
   auto entity = m_entities.addEntity("ball");
 
   float ex = m_window.getSize().x / 2;
@@ -136,13 +141,13 @@ void Game::spawnBall()
 
   Vec2 difference{targetX - ex, targetY - ey};
   difference.normalize();
-  Vec2 velocity{5 * difference.x, 5 * difference.y};
+  Vec2 velocity{0, 5 * difference.y};
 
   entity->cTransform = std::make_shared<CTransform>(Vec2(ex, ey), velocity, 0.0f);
-  entity->cCollision = std::make_shared<CCollision>(20);
+  entity->cCollideBox = std::make_shared<CCollideBox>(width, height);
   entity->cInput = std::make_shared<CInput>();
   entity->rectShape = std::make_shared<CRectShape>(
-      sf::Vector2f(20, 20),
+      sf::Vector2f(width, height),
       sf::Color(255, 255, 255),
       sf::Color(255, 0, 255),
       4.0f
@@ -157,11 +162,11 @@ void Game::sMovement()
   // std::cout << "tamanho do jogador: " << m_player->rectShape->m_size.x << std::endl;
   // std::cout << "posição do jogador - tamanho do jogador: " << m_player->cTransform->pos.x - m_player->rectShape->m_size.x << std::endl;
   // std::cout << m_window.getSize().x << std::endl;
-  if (m_player->cInput->left && (m_player->cTransform->pos.x) > PLAYER_SPEED + m_player->rectShape->m_size.x / 2)
+  if (m_player->cInput->left && m_player->cTransform->pos.x > PLAYER_SPEED)
   {
     m_player->cTransform->velocity.x = -PLAYER_SPEED;
   }
-  if (m_player->cInput->right && (m_player->cTransform->pos.x + (m_player->rectShape->m_size.x / 2)) < m_window.getSize().x - PLAYER_SPEED)
+  if (m_player->cInput->right && (m_player->cTransform->pos.x + m_player->rectShape->m_size.x) < m_window.getSize().x)
   {
     m_player->cTransform->velocity.x = PLAYER_SPEED;
   }
@@ -183,14 +188,48 @@ void Game::sCollision()
 {
   for (auto ball : m_entities.getEntities("ball"))
   {
+    float ball_x1 = ball->cTransform->pos.x;
+    float ball_x2 = ball->cTransform->pos.x + ball->rectShape->m_size.x;
+    float ball_y1 = ball->cTransform->pos.y;
+    float ball_y2 = ball->cTransform->pos.y + ball->rectShape->m_size.y;
     for (auto player : m_entities.getEntities("player"))
     {
       float dist;
       dist = ball->cTransform->pos.dist(player->cTransform->pos);
+      std::cout << "distância bola e player: " << dist << std::endl;
 
-      if (dist < player->cCollision->radius + ball->cCollision->radius)
+      float player_x1 = player->cTransform->pos.x;
+      float player_x2 = player->cTransform->pos.x + player->rectShape->m_size.x;
+      float player_y1 = player->cTransform->pos.y;
+      float player_y2 = player->cTransform->pos.y + player->rectShape->m_size.y;
+
+      
+
+      if (ball_x1 < player_x2 && ball_x2 > player_x1 &&
+          ball_y1 < player_y2 && ball_y2 > player_y1)  
+      if (dist < player->cCollideBox->height + ball->cCollideBox->height)
       {
         ball->cTransform->velocity = {ball->cTransform->velocity.x, -ball->cTransform->velocity.y};
+      }
+    }
+    for (auto top_bar : m_entities.getEntities("top_bar"))
+    {
+      float dist;
+      dist = ball->cTransform->pos.dist(top_bar->cTransform->pos);
+      std::cout << "distância bola e top bar: " << dist << std::endl;
+
+      float top_bar_x1 = top_bar->cTransform->pos.x;
+      float top_bar_x2 = top_bar->cTransform->pos.x + top_bar->rectShape->m_size.x;
+      float top_bar_y1 = top_bar->cTransform->pos.y;
+      float top_bar_y2 = top_bar->cTransform->pos.y + top_bar->rectShape->m_size.y;
+
+      
+
+      if (ball_x1 < top_bar_x2 && ball_x2 > top_bar_x1 &&
+          ball_y1 < top_bar_y2 && ball_y2 > top_bar_y1)  
+      if (dist < top_bar->cCollideBox->height + ball->cCollideBox->height)
+      {
+        ball->cTransform->velocity = {ball->cTransform->velocity.x, +ball->cTransform->velocity.y};
       }
     }
   }

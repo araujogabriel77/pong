@@ -22,6 +22,7 @@ public:
 	std::shared_ptr<CRectShape> rectShape;
 	std::shared_ptr<CShape> circleShape;
 	std::shared_ptr<CCollision> cCollision;
+	std::shared_ptr<CCollideBox> cCollideBox;
 	std::shared_ptr<CInput> cInput;
 	std::shared_ptr<CScore> cScore;
 	std::shared_ptr<CLifespan> cLifeSpan;

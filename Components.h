@@ -49,7 +49,6 @@ public:
 		rectangle.setFillColor(fill);
 		rectangle.setOutlineColor(outline);
 		rectangle.setOutlineThickness(thickness);
-    rectangle.setOrigin(size.x / 2, size.y / 2);
 	}
 };
 
@@ -59,6 +58,16 @@ public:
 	float radius = 0;
 	CCollision(float r)
 		: radius(r) {}
+};
+
+class CCollideBox
+{
+public:
+	float width = 0;
+  float height = 0;
+	CCollideBox(float w, float h)
+		: width(w),
+      height(h) {}
 };
 
 class CScore
