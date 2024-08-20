@@ -32,6 +32,12 @@ public:
 	const std::string& tag() const;
 	const size_t id() const;
 	void destroy();
+
+  /* delta = [abs(x1 - x2), abs(y1 - y2)]
+  * ox = (w1/2) + (w2/2) - delta.x
+  * oy = (h1/2) + (h2/2) - delta.y
+  * overlap = [ox, oy]
+  */
   Vec2 overlap(const Entity& entity) const;
 };
 

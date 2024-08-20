@@ -5,7 +5,7 @@
 #include <random>
 #include <cmath>
 
-const int PLAYER_SPEED = 15;
+const int PLAYER_SPEED = 5;
 
 Game::Game(const std::string& config)
 {
@@ -144,7 +144,7 @@ void Game::spawnBall()
 
   Vec2 difference{targetX - ex, targetY - ey};
   difference.normalize();
-  Vec2 velocity{0, 5 * difference.y};
+  Vec2 velocity{5 * difference.x, 5 * difference.y};
 
   entity->cBoundingBox = std::make_shared<CBoundingBox>(Vec2(width, height));
   entity->cTransform = std::make_shared<CTransform>(Vec2(ex, ey), Vec2(ex, ey), Vec2(1.0f, 1.0f), velocity, 0.0f);
@@ -161,10 +161,6 @@ void Game::sMovement()
 {
   m_player->cTransform->velocity = {0, 0};
 
-  // std::cout << "posição do jogador: " << m_player->cTransform->pos.x << std::endl;
-  // std::cout << "tamanho do jogador: " << m_player->rectShape->m_size.x << std::endl;
-  // std::cout << "posição do jogador - tamanho do jogador: " << m_player->cTransform->pos.x - m_player->rectShape->m_size.x << std::endl;
-  // std::cout << m_window.getSize().x << std::endl;
   if (m_player->cInput->left && m_player->cTransform->pos.x > (PLAYER_SPEED + m_player->cBoundingBox->halfSize.x))
   {
     m_player->cTransform->velocity.x = -PLAYER_SPEED;
@@ -189,32 +185,27 @@ void Game::sMovement()
 
 void Game::sCollision()
 {
-  // delta = [abs(x1 - x2), abs(y1 - y2)]
-  // ox = (w1/2) + (w2/2) - delta.x
-  // oy = (h1/2) + (h2/2) - delta.y
-  // overlap = [ox, oy]
+
   for (auto ball : m_entities.getEntities("ball"))
   {
-    
+    if((ball->cTransform->pos.x - ball->cBoundingBox->halfSize.x) < 0 || (ball->cTransform->pos.x + ball->cBoundingBox->halfSize.x) > m_window.getSize().x)
+    {
+      ball->cTransform->velocity.x *= -1;
+    }
+
     for (auto player : m_entities.getEntities("player"))
     {
-      if(ball->overlap(*player).x > 0)
-      {
-        ball->cTransform->velocity.x *= -1;
-      }
-      if(ball->overlap(*player).y > 0)
+      Vec2 overlap = ball->overlap(*player);
+      if(overlap.y > 0 && overlap.x > 0)
       {
         ball->cTransform->velocity.y *= -1;
       }
-    
     }
+
     for (auto top_bar : m_entities.getEntities("top_bar"))
     {
-      if(ball->overlap(*top_bar).x > 0)
-      {
-        ball->cTransform->velocity.x *= -1;
-      }
-      if(ball->overlap(*top_bar).y > 0)
+      Vec2 overlap = ball->overlap(*top_bar);
+      if(overlap.y > 0 && overlap.x > 0)
       {
         ball->cTransform->velocity.y *= -1;
       }
@@ -227,18 +218,15 @@ void Game::sRender()
   m_window.clear();
   m_player->rectShape->rectangle.setPosition(m_player->cTransform->pos.x, m_player->cTransform->pos.y);
 
-  // draw the entity's sf::CircleShape
   m_window.draw(m_player->rectShape->rectangle);
   m_window.draw(m_text);
   for (auto e : m_entities.getEntities())
   {
-    std::cout << e->tag() << std::endl;
     float xPos, yPos;
     xPos = e->cTransform->pos.x + e->cTransform->velocity.x;
     yPos = e->cTransform->pos.y + e->cTransform->velocity.y;
 
     e->rectShape->rectangle.setPosition(xPos, yPos);
-
     m_window.draw(e->rectShape->rectangle);
   }
   m_window.display();
