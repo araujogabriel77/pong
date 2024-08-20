@@ -5,7 +5,7 @@
 #include <random>
 #include <cmath>
 
-const int PLAYER_SPEED = 5;
+const int PLAYER_SPEED = 10;
 
 Game::Game(const std::string& config)
 {
@@ -144,7 +144,7 @@ void Game::spawnBall()
 
   Vec2 difference{targetX - ex, targetY - ey};
   difference.normalize();
-  Vec2 velocity{5 * difference.x, 5 * difference.y};
+  Vec2 velocity{8 * difference.x, 8 * difference.y};
 
   entity->cBoundingBox = std::make_shared<CBoundingBox>(Vec2(width, height));
   entity->cTransform = std::make_shared<CTransform>(Vec2(ex, ey), Vec2(ex, ey), Vec2(1.0f, 1.0f), velocity, 0.0f);
@@ -196,9 +196,12 @@ void Game::sCollision()
     for (auto player : m_entities.getEntities("player"))
     {
       Vec2 overlap = ball->overlap(*player);
+      
       if(overlap.y > 0 && overlap.x > 0)
       {
+        ball->cTransform->pos.y -= overlap.y;
         ball->cTransform->velocity.y *= -1;
+                 
       }
     }
 
@@ -207,7 +210,10 @@ void Game::sCollision()
       Vec2 overlap = ball->overlap(*top_bar);
       if(overlap.y > 0 && overlap.x > 0)
       {
+        ball->cTransform->pos.y += overlap.y;
         ball->cTransform->velocity.y *= -1;
+        m_score += 25;
+        ball->rectShape->rectangle.setFillColor(sf::Color(m_score, 0, 0)); 
       }
     }
   }
