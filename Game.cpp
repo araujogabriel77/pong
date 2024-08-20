@@ -14,6 +14,7 @@ Game::Game(const std::string& config)
 
 void Game::init(const std::string& path)
 {
+  m_assetsManager = std::make_shared<AssetsManager>("ball", "assets/ball.png");
 	std::ifstream fin(path);
   std::string configType;
   int window_width, window_height, frameLimit, isFullScreen;
@@ -46,7 +47,7 @@ void Game::init(const std::string& path)
   m_window.create(sf::VideoMode(window_width, window_height), "Pong");
   m_window.setFramerateLimit(frameLimit);
   m_window.setVerticalSyncEnabled(true);
-  
+
   spawnPlayer();
   spawnTopBar();
   spawnBall();
@@ -155,6 +156,12 @@ void Game::spawnBall()
       sf::Color(255, 0, 255),
       4.0f
   );
+  float spriteW = 70;
+  float spriteH = 104;
+  entity->sprite = std::make_shared<sf::Sprite>(m_assetsManager->getTexture("ball"));
+  entity->sprite->setTextureRect(sf::IntRect(0, 0, spriteW, spriteH));
+  entity->sprite->setScale(0.5, 0.5);
+  entity->sprite->setOrigin(spriteW / 2, spriteH / 2);
 }
 
 void Game::sMovement()
@@ -233,6 +240,11 @@ void Game::sRender()
     yPos = e->cTransform->pos.y + e->cTransform->velocity.y;
 
     e->rectShape->rectangle.setPosition(xPos, yPos);
+    if(e->sprite) {
+      e->sprite->setPosition(xPos, yPos);
+      m_window.draw(*e->sprite);
+    }
+
     m_window.draw(e->rectShape->rectangle);
   }
   m_window.display();

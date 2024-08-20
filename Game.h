@@ -2,23 +2,19 @@
 
 #include "Entity.h"
 #include "EntityManager.h"
+#include "AssetsManager.h"
 
 #include <SFML/Graphics.hpp>
-
-struct PlayerConfig { int SR, CR, FR, FG, FB, OR, OG, OB, OT, V; float S; };
-struct EnemyConfig { int SR, CR, OR, OG, OB, OT, VMIN, VMAX, L, SI; float SMIN, SMAX; };
-struct BulletConfig { int SR, CR, FR, FG, FB, OR, OG, OB, OT, V, L; float S; };
 
 class Game
 {
 	sf::RenderWindow m_window; // the window we will draw to
 	EntityManager m_entities; // vector of entities to maintain
+  std::shared_ptr<AssetsManager> m_assetsManager;
 	sf::Font m_font; // the font we will use to draw
 	sf::Text m_text; 
   int m_score = 0; // the score text to be drawn to the screen
 	int m_currentFrame = 0;
-	int m_lastEnemySpawnTime = 0;
-	int m_specialWeaponCharge = 0;
 	bool m_paused = false; // whether we update game logic
 	bool m_running = true; // whether the game is running
 
@@ -38,7 +34,6 @@ class Game
 	void spawnEnemy();
 	void spawnBall();
 	void spawnSmallEnemies(std::shared_ptr<Entity> entity);
-	// void spawnBall(std::shared_ptr<Entity> entity, const Vec2& mousePos);
 
 public:
 	Game(const std::string& config); // constructor, takes in game config

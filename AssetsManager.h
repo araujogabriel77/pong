@@ -12,5 +12,8 @@ class AssetsManager
   TextureMap m_textureMap;
 
   public:
-  AssetsManager();
+  AssetsManager(const std::string& name, const std::string& filename);
+
+  void loadTextures(const std::string& name, const std::string& filename);
+  sf::Texture& getTexture(const std::string& name);
 };
