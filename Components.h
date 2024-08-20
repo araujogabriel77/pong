@@ -3,16 +3,28 @@
 #include "Vec2.h"
 #include<SFML/Graphics.hpp>
 
+
 class CTransform
 {
 public:
 	Vec2 pos = { 0.0, 0.0 };
+	Vec2 prevPos = { 0.0, 0.0 };
+	Vec2 scale = { 1.0, 1.0 };
 	Vec2 velocity = { 0.0, 0.0 };
 	float angle = 0;
 
 // Recebe a um vec2 como posição, um vec2 como velocidade e um float como ângulo
-	CTransform(const Vec2& p, const Vec2& v, float a)
-		: pos(p), velocity(v), angle(a) {}
+	CTransform(const Vec2& p, const Vec2& pp, const Vec2& s,const Vec2& v, float a)
+		: pos(p), prevPos(pp), scale(s), velocity(v), angle(a) {}
+};
+
+class CBoundingBox
+{
+  public:
+    Vec2 size;
+    Vec2 halfSize;
+    CBoundingBox(Vec2 s)
+      : size(s), halfSize(s.x / 2, s.y / 2) {}
 };
 
 class CShape /*: public sf::Shape*/
@@ -35,7 +47,6 @@ class CRectShape /*: public sf::Shape*/
 {
 public:
 	sf::RectangleShape rectangle;
-  sf::Vector2f m_size;
 
 	CRectShape(
     sf::Vector2f size,
@@ -43,12 +54,12 @@ public:
 		const sf::Color& outline,
     float thickness
     )
-		: rectangle(size),
-      m_size(sf::Vector2f(size.x + thickness, size.y + thickness))
+		: rectangle(size)
 	{
 		rectangle.setFillColor(fill);
 		rectangle.setOutlineColor(outline);
 		rectangle.setOutlineThickness(thickness);
+    rectangle.setOrigin(size.x / 2, size.y / 2);
 	}
 };
 
@@ -58,16 +69,6 @@ public:
 	float radius = 0;
 	CCollision(float r)
 		: radius(r) {}
-};
-
-class CCollideBox
-{
-public:
-	float width = 0;
-  float height = 0;
-	CCollideBox(float w, float h)
-		: width(w),
-      height(h) {}
 };
 
 class CScore
@@ -97,9 +98,4 @@ public:
 	bool shoot = false;
 
 	CInput() {}
-};
-
-class CBoundingBox {
-  public:
-    Vec2 size;
 };
