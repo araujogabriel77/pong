@@ -46,7 +46,7 @@ void Game::init(const std::string& path)
   m_window.create(sf::VideoMode(window_width, window_height), "Pong");
   m_window.setFramerateLimit(frameLimit);
   m_window.setVerticalSyncEnabled(true);
-
+  
   spawnPlayer();
   spawnTopBar();
   spawnBall();

@@ -14,8 +14,8 @@ class Game
 	sf::RenderWindow m_window; // the window we will draw to
 	EntityManager m_entities; // vector of entities to maintain
 	sf::Font m_font; // the font we will use to draw
-	sf::Text m_text; // the score text to be drawn to the screen
-	int m_score = 0;
+	sf::Text m_text; 
+  int m_score = 0; // the score text to be drawn to the screen
 	int m_currentFrame = 0;
 	int m_lastEnemySpawnTime = 0;
 	int m_specialWeaponCharge = 0;
