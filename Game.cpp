@@ -14,7 +14,7 @@ Game::Game(const std::string& config)
 
 void Game::init(const std::string& path)
 {
-  m_assetsManager = std::make_shared<AssetsManager>("ball", "assets/ball.png");
+  m_assetsManager = std::make_shared<AssetsManager>("ball", "assets/chicken.png");
 	std::ifstream fin(path);
   std::string configType;
   int window_width, window_height, frameLimit, isFullScreen;
@@ -150,12 +150,12 @@ void Game::spawnBall()
   entity->cBoundingBox = std::make_shared<CBoundingBox>(Vec2(width, height));
   entity->cTransform = std::make_shared<CTransform>(Vec2(ex, ey), Vec2(ex, ey), Vec2(1.0f, 1.0f), velocity, 0.0f);
   entity->cInput = std::make_shared<CInput>();
-  entity->rectShape = std::make_shared<CRectShape>(
-      sf::Vector2f(width, height),
-      sf::Color(255, 255, 255),
-      sf::Color(255, 0, 255),
-      4.0f
-  );
+  // entity->rectShape = std::make_shared<CRectShape>(
+  //     sf::Vector2f(width, height),
+  //     sf::Color(255, 255, 255),
+  //     sf::Color(255, 0, 255),
+  //     4.0f
+  // );
   float spriteW = 70;
   float spriteH = 104;
   entity->sprite = std::make_shared<sf::Sprite>(m_assetsManager->getTexture("ball"));
@@ -220,7 +220,7 @@ void Game::sCollision()
         ball->cTransform->pos.y += overlap.y;
         ball->cTransform->velocity.y *= -1;
         m_score += 25;
-        ball->rectShape->rectangle.setFillColor(sf::Color(m_score, 0, 0)); 
+        // ball->rectShape->rectangle.setFillColor(sf::Color(m_score, 0, 0)); 
       }
     }
   }
@@ -239,13 +239,14 @@ void Game::sRender()
     xPos = e->cTransform->pos.x + e->cTransform->velocity.x;
     yPos = e->cTransform->pos.y + e->cTransform->velocity.y;
 
-    e->rectShape->rectangle.setPosition(xPos, yPos);
     if(e->sprite) {
       e->sprite->setPosition(xPos, yPos);
       m_window.draw(*e->sprite);
     }
-
-    m_window.draw(e->rectShape->rectangle);
+    if(e->rectShape) {
+      m_window.draw(e->rectShape->rectangle);
+      e->rectShape->rectangle.setPosition(xPos, yPos);
+    }
   }
   m_window.display();
 }
