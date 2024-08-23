@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Entity.h"
-#include "EntityManager.h"
-#include "AssetsManager.h"
+#include "Entity.hpp"
+#include "EntityManager.hpp"
+#include "AssetsManager.hpp"
 
 #include <SFML/Graphics.hpp>
 

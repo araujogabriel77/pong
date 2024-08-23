@@ -1,5 +1,5 @@
 #include <cmath>
-#include "Vec2.h"
+#include "Vec2.hpp"
 
 Vec2::Vec2(float xin, float yin)
     : x(xin), y(yin)

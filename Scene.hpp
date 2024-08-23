@@ -1,7 +1,7 @@
 #pragma once
 
-#include "GameEngine.h"
-#include "EntityManager.h"
+#include "GameEngine.hpp"
+#include "EntityManager.hpp"
 #include <map>
 
 typedef std::map<int, std::string> ActionMap;

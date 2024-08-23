@@ -1,4 +1,4 @@
-#include "AssetsManager.h"
+#include "AssetsManager.hpp"
 
 AssetsManager::AssetsManager(const std::string& name, const std::string& filename)
 {

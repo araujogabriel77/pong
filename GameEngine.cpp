@@ -1,5 +1,5 @@
-#include "GameEngine.h"
-#include "Scene_N1.h"
+#include "GameEngine.hpp"
+#include "Menu_Scene.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -16,7 +16,7 @@ GameEngine::GameEngine(const std::string& config)
 void GameEngine::init()
 {
   loadConfiguration();
-  changeScene("N1", std::make_shared<Scene_N1>(this));
+  changeScene("MENU", std::make_shared<Menu_Scene>(this));
 }
 
 void GameEngine::loadConfiguration()

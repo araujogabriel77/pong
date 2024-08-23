@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Entity.h"
-#include "EntityManager.h"
-#include "Scene.h"
+#include "Entity.hpp"
+#include "EntityManager.hpp"
+#include "Scene.hpp"
 
 #include <SFML/Graphics/RenderWindow.hpp>
 

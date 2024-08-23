@@ -1,4 +1,4 @@
-#include "Entity.h"
+#include "Entity.hpp"
 
 Entity::Entity(const size_t id, const std::string& tag)
 	: m_id(id)
