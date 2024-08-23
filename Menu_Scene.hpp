@@ -13,6 +13,7 @@ class Menu_Scene: public Scene
   void init();
   void sUserInput();
   void sRender();
+  void quit();
 
   public:
   Menu_Scene(GameEngine* game);

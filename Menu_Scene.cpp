@@ -30,12 +30,19 @@ void Menu_Scene::sRender()
 {
   m_game->window().clear();
 
-  int xTextPos = 200;
+  int xTextPos = 20;
   for(auto e : m_menuItems)
   {
     auto text = sf::Text(e, m_font);
     text.setPosition(10, xTextPos);
-    xTextPos += 50;
+    text.setFillColor(sf::Color(180, 180, 180));
+    xTextPos += 60;
+    if(m_menuItems[m_selectedItem] == e)
+    {
+      text.setFillColor(sf::Color(255, 255, 255));
+      text.setOutlineThickness(2);
+      text.setOutlineColor(sf::Color(0, 0, 255));
+    }
     m_game->window().draw(text);
   }
  
@@ -50,15 +57,41 @@ void Menu_Scene::sUserInput()
 	{
 		if (event.type == sf::Event::Closed)
 		{
-			m_game->quit();
+			quit();
 		}
 
-    if (event.type == sf::Event::MouseButtonPressed)
+    if(event.type == sf::Event::KeyPressed)
     {
-      if (event.mouseButton.button == sf::Mouse::Left)
+      switch (event.key.code)
       {
-        // m_game->changeScene("N2", std::make_shared<Scene_N2>(m_game));
+        case sf::Keyboard::Down:
+          m_selectedItem++;
+          if(m_selectedItem >= m_menuItems.size())
+          {
+            m_selectedItem = 0;
+          }
+          break;
+        case sf::Keyboard::Up:
+          m_selectedItem--;
+          if(m_selectedItem < 0)
+          {
+            m_selectedItem = m_menuItems.size() - 1;
+          }
+          break;
+        case sf::Keyboard::Return:
+          if(m_menuItems[m_selectedItem] == "EXIT")
+          {
+            quit();
+          }
+          break;
+        default:
+          break;
       }
     }
   }
+}
+
+void Menu_Scene::quit()
+{
+  m_game->quit();
 }
