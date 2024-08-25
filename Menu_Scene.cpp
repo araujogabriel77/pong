@@ -1,4 +1,5 @@
 #include "Menu_Scene.hpp"
+#include "Play_Scene.hpp"
 
 Menu_Scene::Menu_Scene(GameEngine* game)
   : Scene(game)
@@ -82,6 +83,10 @@ void Menu_Scene::sUserInput()
           if(m_menuItems[m_selectedItem] == "EXIT")
           {
             quit();
+          }
+          if(m_menuItems[m_selectedItem] == "START")
+          {
+            m_game->changeScene("PLAY", std::make_shared<Play_Scene>(m_game));
           }
           break;
         default:

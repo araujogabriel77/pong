@@ -18,10 +18,10 @@ class Entity
 public:
 
 	// component pointers
+	// std::shared_ptr<CRectShape> rectShape;
+	std::shared_ptr<sf::Shape> shape;
+	std::shared_ptr<CSprite> sprite;
 	std::shared_ptr<CTransform> cTransform;
-	std::shared_ptr<CRectShape> rectShape;
-	std::shared_ptr<sf::Sprite> sprite;
-	std::shared_ptr<CShape> circleShape;
 	std::shared_ptr<CCollision> cCollision;
 	std::shared_ptr<CBoundingBox> cBoundingBox;
 	std::shared_ptr<CInput> cInput;
