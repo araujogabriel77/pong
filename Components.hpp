@@ -8,14 +8,13 @@ class CTransform
 {
 public:
 	Vec2 pos = { 0.0, 0.0 };
-	Vec2 prevPos = { 0.0, 0.0 };
 	Vec2 scale = { 1.0, 1.0 };
 	Vec2 velocity = { 0.0, 0.0 };
 	float angle = 0;
 
 // Recebe a um vec2 como posição, um vec2 como velocidade e um float como ângulo
-	CTransform(const Vec2& p, const Vec2& pp, const Vec2& s,const Vec2& v, float a)
-		: pos(p), prevPos(pp), scale(s), velocity(v), angle(a) {}
+	CTransform(const Vec2& p, const Vec2& s,const Vec2& v, float a)
+		: pos(p), scale(s), velocity(v), angle(a) {}
 };
 
 class CBoundingBox
@@ -61,6 +60,17 @@ public:
 		rectangle.setOutlineThickness(thickness);
     rectangle.setOrigin(size.x / 2, size.y / 2);
 	}
+};
+
+class CSprite
+{
+public:
+  sf::Sprite sprite;
+  
+  CSprite(sf::Texture& texture)
+    {
+      sprite.setTexture(texture);
+    }
 };
 
 class CCollision
