@@ -1,5 +1,5 @@
 # Pong
 
-basic game created c++ and SFML lib
+basic game created with c++ and SFML lib
 
 ECS architeture
